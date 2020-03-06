@@ -7,7 +7,6 @@ Date : 06.03.2020
 from scapy.all import *
 import argparse
 import numpy as np
-import os.path
 import string
 import random
 
