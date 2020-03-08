@@ -21,13 +21,13 @@ if args.ssid.isdigit():
         dataSSID.append(''.join(random.choice(alphadigit) for i in range(10)))
 else :
 	with open(args.ssid) as f1 :
-	    dataSSID = np.loadtxt(f1, dtype=np.str)
+	    dataSSID = np.loadtxt(f1, dtype=np.str, ndmin=1)
 
 # Dot11Elt --> 802.11 Information Element
 
 #Default config
 
-srcAddr = '38:00:25:47:4d:f7'
+srcAddr = '27:aa:27:aa:27:aa'
 dstAddr = 'ff:ff:ff:ff:ff:ff'
 # Layer 1 
 layer1 = RadioTap() # Definit la transmission par onde-radio
@@ -38,34 +38,25 @@ type 0 : Trame de management
 subtype 8 : Sous-type Beacon
 addr1 : Adresse de destination
 addr2 : Adresse source
+addr3 : Adresse source
 """
-layer2Dot11 = Dot11(type=0, subtype=8, addr1=dstAddr, addr2=srcAddr)
+layer2Dot11 = Dot11(type=0, subtype=8, addr1=dstAddr, addr2=srcAddr, addr3=srcAddr)
 
 
 # Layer 2 beacon (Type de trame pour informer l'existance de notre ESSID)
 layer2Dot11Beacon = Dot11Beacon()
 # Layer 2 essid (Information sur le SSID a transmettre)
-"""
-ID : Identifiant du champs remplie
-info : Information du champs
-len : Taille de l'information du champs
-"""
-layer2Dot11Element = Dot11Elt(ID='SSID', info='SSID_test', len=len('SSID_test'))
-
-vLoop = True # Defini si on veut la version qui boucle sur la liste ou non, a retiré après debug
-
-if not vLoop:
-    # Construction de la trame complete avec toutes les couches
-    frame = layer1/layer2Dot11/layer2Dot11Beacon/layer2Dot11Element
-    send(frame,iface='wlo1', inter=0.5, loop=1)
-    # Version avec loop sur frame
-else:
-    try:
-        while True: # Spammer CTRL+C pour stopper le script
-            for i in range(len(dataSSID)):
-                layer2Dot11Element = Dot11Elt(ID='SSID', info=dataSSID[i], len=len(dataSSID[i]))
-                frame = layer1/layer2Dot11/layer2Dot11Beacon/layer2Dot11Element
-                send(frame, iface='wlo1', inter=0.01, count=10)
-            time.sleep(0.5)
-    except KeyboardInterrupt:
-        print('Script ended.')
+try:
+    while True: # Spammer CTRL+C pour stopper le script
+        for i in range(len(dataSSID)):
+            """
+            ID : Identifiant du champs remplie
+            info : Information du champs
+            len : Taille de l'information du champs
+            """
+            layer2Dot11Element = Dot11Elt(ID='SSID', info=dataSSID[i], len=len(dataSSID[i]))
+            frame = layer1/layer2Dot11/layer2Dot11Beacon/layer2Dot11Element
+            sendp(frame, iface='wlo1mon', inter=0.2, count=10)
+        time.sleep(0.2)
+except KeyboardInterrupt:
+    print('Script ended.')
