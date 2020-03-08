@@ -2,7 +2,7 @@
 Script baser sur le site suivant : https://pythontips.com/2018/09/08/sending-sniffing-wlan-beacon-frames-using-scapy/
 
 Auteurs : Polier Florian, Tran Eric
-Date : 06.03.2020
+Date : 08.03.2020
 """
 from scapy.all import *
 import argparse
@@ -10,20 +10,19 @@ import numpy as np
 import string
 import random
 
+# Gestion des arguments (si fichier avec ssid ou generation random)
 parser = argparse.ArgumentParser()
 parser.add_argument('ssid',help='File of ssid or number of random SSID')
 args = parser.parse_args()
 dataSSID = []
-if args.ssid.isdigit():
+if args.ssid.isdigit(): #Generation de SSID random
     #SSID Random https://towardsdatascience.com/generating-pseudo-random-strings-in-python-be098f9f5547
     for i in range(int(args.ssid)):
         alphadigit = string.ascii_letters + string.digits
         dataSSID.append(''.join(random.choice(alphadigit) for i in range(10)))
-else :
+else : #Lecture fichier SSID
 	with open(args.ssid) as f1 :
 	    dataSSID = np.loadtxt(f1, dtype=np.str, ndmin=1)
-
-# Dot11Elt --> 802.11 Information Element
 
 #Default config
 
@@ -45,7 +44,7 @@ layer2Dot11 = Dot11(type=0, subtype=8, addr1=dstAddr, addr2=srcAddr, addr3=srcAd
 
 # Layer 2 beacon (Type de trame pour informer l'existance de notre ESSID)
 layer2Dot11Beacon = Dot11Beacon()
-# Layer 2 essid (Information sur le SSID a transmettre)
+# Layer 2 essid avec Dot11Elt --> 802.11 Information Element (Information sur le SSID a transmettre)
 try:
     while True: # Spammer CTRL+C pour stopper le script
         for i in range(len(dataSSID)):
