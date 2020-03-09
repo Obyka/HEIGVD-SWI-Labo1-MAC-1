@@ -13,6 +13,7 @@ import random
 # Gestion des arguments (si fichier avec ssid ou generation random)
 parser = argparse.ArgumentParser()
 parser.add_argument('ssid',help='File of ssid or number of random SSID')
+parser.add_argument('interface',help='Network Interface')
 args = parser.parse_args()
 dataSSID = []
 if args.ssid.isdigit(): #Generation de SSID random
@@ -55,7 +56,7 @@ try:
             """
             layer2Dot11Element = Dot11Elt(ID='SSID', info=dataSSID[i], len=len(dataSSID[i]))
             frame = layer1/layer2Dot11/layer2Dot11Beacon/layer2Dot11Element
-            sendp(frame, iface='wlo1mon', inter=0.2, count=10)
+            sendp(frame, iface=args.interface, inter=0.2, count=10)
         time.sleep(0.2)
 except KeyboardInterrupt:
     print('Script ended.')
