@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#based on : https://www.thepythoncode.com/code/building-wifi-scanner-in-python-scapy
+"""
+Script baser sur le site suivant : https://www.thepythoncode.com/code/building-wifi-scanner-in-python-scapy
 
+Auteurs : Polier Florian, Tran Eric
+Date : 08.03.2020
+"""
 from scapy.all import *
 from threading import Thread
 import pandas
