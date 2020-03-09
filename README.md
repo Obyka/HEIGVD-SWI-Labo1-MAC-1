@@ -110,6 +110,8 @@ b) Développer un script en Python/Scapy capable de générer et envoyer des tra
 ![image](images/script1_deauth.jpg)
 ![image](images/script1_ping.jpg)
 
+Remarque : On peut voir qu'on envoie une trame de Déauthentification à l'adresse MAC de la cible et que sur la STA cible, le ping est intérrompu à un certain moment donné (voir capture ping).
+
 __Question__ : quels codes/raisons justifient l'envoie de la trame à la STA cible et pourquoi ?
 
  https://community.cisco.com/t5/wireless-mobility-documents/802-11-association-status-802-11-deauth-reason-codes/ta-p/3148055
@@ -160,6 +162,8 @@ Fonctionnement :
 ![image](images/flood_ssid_script.png)
 ![image](images/flood_ssid_pcap.png)
 
+
+On peut voir qu'il y a des ESSIDs floodés par une adresse MAC 27:aa:27:aa:27:aa qui est celui qu'on a défini dans le script de flooding.
 ## Livrables
 
 Un fork du repo original . Puis, un Pull Request contenant :
