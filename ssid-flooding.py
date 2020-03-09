@@ -1,8 +1,10 @@
 """
 Script baser sur le site suivant : https://pythontips.com/2018/09/08/sending-sniffing-wlan-beacon-frames-using-scapy/
 
+Syntax d'utilisation : sudo python ssid-flooding.py textfile|integer interface
+
 Auteurs : Polier Florian, Tran Eric
-Date : 08.03.2020
+Date : 09.03.2020
 """
 from scapy.all import *
 import argparse
