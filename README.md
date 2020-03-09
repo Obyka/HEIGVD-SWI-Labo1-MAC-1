@@ -107,6 +107,9 @@ b) Développer un script en Python/Scapy capable de générer et envoyer des tra
 * 5 - Disassociated because AP is unable to handle all currently associated stations
 * 8 - Deauthenticated because sending STA is leaving BSS
 
+![image](images/script1_deauth.jpg)
+![image](images/script1_ping.jpg)
+
 __Question__ : quels codes/raisons justifient l'envoie de la trame à la STA cible et pourquoi ?
 
  https://community.cisco.com/t5/wireless-mobility-documents/802-11-association-status-802-11-deauth-reason-codes/ta-p/3148055
@@ -143,6 +146,10 @@ a)	Développer un script en Python/Scapy avec les fonctionnalités suivantes :
 __Question__ : Expliquer l'effet de cette attaque sur la cible
 
 On peut faire croire à la cible que notre rogue AP est l'AP originale, attention toutefois à la sécurité mise en place par les OS (crypto identique, adresse MAC identique, etc...)
+
+![image](images/script2_preuve.jpg)
+
+On peut voir que la valeur du canal à fait +6 mod 14 et que le ESSID est Honor 8.
 
 ### 3. SSID flood attack
 
