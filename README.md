@@ -93,7 +93,13 @@ a) Utiliser la fonction de déauthentification de la suite aircrack, capturer le
 
 __Question__ : quel code est utilisé par aircrack pour déauthentifier un client 802.11. Quelle est son interpretation ?
 
+- Il utilise le code 7 : Class 3 frame received from nonassociated station
+
 __Question__ : A l'aide d'un filtre d'affichage, essayer de trouver d'autres trames de déauthentification dans votre capture. Avez-vous en trouvé d'autres ? Si oui, quel code contient-elle et quelle est son interpretation ?
+
+![image](images/q2-deauth.jpg)
+
+- Code 4 : Station inactive.
 
 b) Développer un script en Python/Scapy capable de générer et envoyer des trames de déauthentification. Le script donne le choix entre des Reason codes différents (liste ci-après) et doit pouvoir déduire si le message doit être envoyé à la STA ou à l'AP :
 * 1 - Unspecified
@@ -103,13 +109,28 @@ b) Développer un script en Python/Scapy capable de générer et envoyer des tra
 
 __Question__ : quels codes/raisons justifient l'envoie de la trame à la STA cible et pourquoi ?
 
+ https://community.cisco.com/t5/wireless-mobility-documents/802-11-association-status-802-11-deauth-reason-codes/ta-p/3148055
+
+- Code 1 : Raison non spécifiée, au développeur de choisir. 
+- Code 4 : Désassocié pour cause d'inactivité, la STA n'a pas envoyé de donnée depuis son association.
+- Code 5 : L'AP n'est pas capable de gérer toutes les stations associées.
+
 __Question__ : quels codes/raisons justifient l'envoie de la trame à l'AP et pourquoi ?
+
+- Code 1 : Raison non spécifiée, au développeur de choisir. 
+- Code 8 : Désassocié car la STA s'est déconnectée du BSS.
 
 __Question__ : Comment essayer de déauthentifier toutes les STA ?
 
+- Envoyer la trame de déauthentification à l'adresse de broadcast MAC "ff:ff:ff:ff:ff:ff".
+
 __Question__ : Quelle est la différence entre le code 3 et le code 8 de la liste ?
 
+- Le code 3 définit la désassociation dans un réseau IBSS et ESS, alors que le code 8 définit la désassociation dans un réseau BSS.
+
 __Question__ : Expliquer l'effet de cette attaque sur la cible
+
+- La cible est dissociée du réseau et ne peut plus se reconnecter si les trames sont envoyées en continue.
 
 ### 2. Fake channel evil tween attack
 a)	Développer un script en Python/Scapy avec les fonctionnalités suivantes :
@@ -121,6 +142,7 @@ a)	Développer un script en Python/Scapy avec les fonctionnalités suivantes :
 
 __Question__ : Expliquer l'effet de cette attaque sur la cible
 
+On peut faire croire à la cible que notre rogue AP est l'AP originale, attention toutefois à la sécurité mise en place par les OS (crypto identique, adresse MAC identique, etc...)
 
 ### 3. SSID flood attack
 
